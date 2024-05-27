@@ -31,12 +31,12 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Mixin(targets = "net.minecraft.client.multiplayer.GuiConnecting$1")
-public class MixinGuiConnecting_1 {
+public class MixinGuiConnecting1 {
 
     @Redirect(method = "run", at = @At(value = "INVOKE", target = "Ljava/net/InetAddress;getByName(Ljava/lang/String;)Ljava/net/InetAddress;"))
     public InetAddress trackServerVersion(String s) throws UnknownHostException {
         final InetAddress address = InetAddress.getByName(s);
-        ProtocolVersion version = ((ExtendedServerData) Minecraft.getMinecraft().getCurrentServerData()).viaForge$getVersion();
+        ProtocolVersion version = ((ExtendedServerData) Minecraft.getMinecraft().func_147104_D()).viaForge$getVersion();
         if (version == null) {
             version = ViaForgeCommon.getManager().getTargetVersion();
         }

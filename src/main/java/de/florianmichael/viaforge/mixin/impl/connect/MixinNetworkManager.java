@@ -27,7 +27,6 @@ import net.minecraft.network.NettyEncryptingDecoder;
 import net.minecraft.network.NettyEncryptingEncoder;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.CryptManager;
-import net.minecraft.util.LazyLoadBase;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import net.raphimc.vialoader.netty.VLLegacyPipeline;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,17 +47,19 @@ public class MixinNetworkManager implements VFNetworkManager {
 
     @Shadow private Channel channel;
 
-    @Shadow private boolean isEncrypted;
+    @Shadow private boolean field_152463_r;
+
     @Unique
     private Cipher viaForge$decryptionCipher;
 
     @Unique
     private ProtocolVersion viaForge$targetVersion;
 
-    @Inject(method = "setCompressionTreshold", at = @At("RETURN"))
+
+    /*@Inject(method = "setCompressionTreshold", at = @At("RETURN"))
     public void reorderPipeline(int p_setCompressionTreshold_1_, CallbackInfo ci) {
         ViaForgeCommon.getManager().reorderCompression(channel);
-    }
+    }*/
 
     @Inject(method = "enableEncryption", at = @At("HEAD"), cancellable = true)
     private void storeEncryptionCiphers(SecretKey key, CallbackInfo ci) {
@@ -69,16 +70,16 @@ public class MixinNetworkManager implements VFNetworkManager {
             // Minecraft 1.6.4 supports tile encryption which means the server can only enable one side of the encryption
             // So we only enable the encryption side and later enable the decryption side if the 1.7 -> 1.6 protocol
             // tells us to do, therefore we need to store the cipher instance.
-            this.viaForge$decryptionCipher = CryptManager.createNetCipherInstance(2, key);
+            this.viaForge$decryptionCipher = CryptManager.func_151229_a(2, key);
 
             // Enabling the encryption side
-            this.isEncrypted = true;
-            this.channel.pipeline().addBefore(VLLegacyPipeline.VIALEGACY_PRE_NETTY_LENGTH_REMOVER_NAME, "encrypt", new NettyEncryptingEncoder(CryptManager.createNetCipherInstance(1, key)));
+            this.field_152463_r = true;
+            this.channel.pipeline().addBefore(VLLegacyPipeline.VIALEGACY_PRE_NETTY_LENGTH_REMOVER_NAME, "encrypt", new NettyEncryptingEncoder(CryptManager.func_151229_a(1, key)));
         }
     }
 
-    @Inject(method = "createNetworkManagerAndConnect", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;group(Lio/netty/channel/EventLoopGroup;)Lio/netty/bootstrap/AbstractBootstrap;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void setTargetVersion(InetAddress address, int serverPort, boolean useNativeTransport, CallbackInfoReturnable<NetworkManager> cir, NetworkManager networkmanager, Class oclass, LazyLoadBase lazyloadbase) {
+    @Inject(method = "provideLanClient", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;group(Lio/netty/channel/EventLoopGroup;)Lio/netty/bootstrap/AbstractBootstrap;"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private static void setTargetVersion(InetAddress address, int serverPort, CallbackInfoReturnable<NetworkManager> cir, NetworkManager networkmanager) {
         final VFNetworkManager mixinNetworkManager = (VFNetworkManager) networkmanager;
         mixinNetworkManager.viaForge$setTrackedVersion(VersionTracker.getServerProtocolVersion(address));
     }
@@ -98,5 +99,5 @@ public class MixinNetworkManager implements VFNetworkManager {
     public void viaForge$setTrackedVersion(ProtocolVersion version) {
         viaForge$targetVersion = version;
     }
-    
+
 }

@@ -38,7 +38,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GuiScreenAddServer.class)
 public class MixinGuiScreenAddServer extends GuiScreen {
 
-    @Shadow @Final private ServerData serverData;
+    @Shadow @Final private ServerData field_146311_h;
 
     @Inject(method = "initGui", at = @At("RETURN"))
     public void initGui(CallbackInfo ci) {
@@ -47,7 +47,7 @@ public class MixinGuiScreenAddServer extends GuiScreen {
         if (config.isShowAddServerButton()) {
             final Pair<Integer, Integer> pos = config.getAddServerScreenButtonPosition().getPosition(this.width, this.height);
 
-            final ProtocolVersion target = ((ExtendedServerData) serverData).viaForge$getVersion();
+            final ProtocolVersion target = ((ExtendedServerData) field_146311_h).viaForge$getVersion();
             buttonList.add(new GuiButton(1_000_000_000, pos.key(), pos.value(), 100, 20, target != null ? target.getName() : "Set Version"));
         }
     }
@@ -58,11 +58,11 @@ public class MixinGuiScreenAddServer extends GuiScreen {
             if (button.id == 1_000_000_000) {
                 mc.displayGuiScreen(new GuiProtocolSelector(this, true, (version, parent) -> {
                     // Set version and go back to the parent screen.
-                    ((ExtendedServerData) serverData).viaForge$setVersion(version);
+                    ((ExtendedServerData) field_146311_h).viaForge$setVersion(version);
                     mc.displayGuiScreen(parent);
                 }));
             }
         }
     }
-    
+
 }

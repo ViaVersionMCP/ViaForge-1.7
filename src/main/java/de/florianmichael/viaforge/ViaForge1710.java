@@ -18,25 +18,26 @@
 
 package de.florianmichael.viaforge;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Mod;
 import de.florianmichael.viaforge.common.platform.VFPlatform;
 import de.florianmichael.viaforge.provider.ViaForgeGameProfileFetcher;
 import net.minecraft.client.Minecraft;
-import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.util.Session;
-import net.minecraftforge.fml.common.Mod;
 import net.raphimc.vialegacy.protocols.release.protocol1_8to1_7_6_10.providers.GameProfileFetcher;
 
 import java.io.File;
 import java.util.function.Supplier;
 
-@Mod(modid = "viaforge", name = "ViaForge", acceptableRemoteVersions = "*", clientSideOnly=true, useMetadata=true)
-public class ViaForge189 implements VFPlatform {
-    
-    public static final ViaForge189 PLATFORM = new ViaForge189();
+@SuppressWarnings("all")
+@Mod(modid = "viaforge", name = "ViaForge", acceptableRemoteVersions = "*", useMetadata=true)
+public class ViaForge1710 implements VFPlatform {
+
+    public static final ViaForge1710 PLATFORM = new ViaForge1710();
 
     @Override
     public int getGameVersion() {
-        return RealmsSharedConstants.NETWORK_PROTOCOL_VERSION;
+        return 5;
     }
 
     @Override
@@ -51,14 +52,14 @@ public class ViaForge189 implements VFPlatform {
 
     @Override
     public void joinServer(String serverId) throws Throwable {
-        final Session session = Minecraft.getMinecraft().getSession();
+        Session session = Minecraft.getMinecraft().getSession();
 
-        Minecraft.getMinecraft().getSessionService().joinServer(session.getProfile(), session.getToken(), serverId);
+        Minecraft.getMinecraft().func_152347_ac().joinServer(session.func_148256_e(), session.getToken(), serverId);
     }
 
     @Override
     public GameProfileFetcher getGameProfileFetcher() {
         return new ViaForgeGameProfileFetcher();
     }
-    
+
 }

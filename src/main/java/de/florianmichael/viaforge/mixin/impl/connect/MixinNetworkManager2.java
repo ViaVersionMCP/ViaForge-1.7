@@ -27,16 +27,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.network.NetworkManager$5")
-public class MixinNetworkManager_5 {
+@Mixin(targets = "net.minecraft.network.NetworkManager$2", remap = false)
+public class MixinNetworkManager2 {
 
     @Final
     @Mutable
     NetworkManager val$networkmanager;
 
-    @Inject(method = "initChannel", at = @At(value = "TAIL"), remap = false)
+    @Inject(method = "initChannel", at = @At(value = "TAIL"))
     private void hookViaPipeline(Channel channel, CallbackInfo ci) {
         ViaForgeCommon.getManager().inject(channel, (VFNetworkManager) val$networkmanager);
     }
-    
+
 }

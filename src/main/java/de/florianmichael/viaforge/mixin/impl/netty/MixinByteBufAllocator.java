@@ -16,17 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.florianmichael.viaforge.common.gui;
+package de.florianmichael.viaforge.mixin.impl.netty;
 
-import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import org.spongepowered.asm.mixin.Mixin;
 
-/**
- * This interface is used to store the target version for a specific server in the server list.
- */
-public interface ExtendedServerData {
-
-    ProtocolVersion viaForge$getVersion();
-
-    void viaForge$setVersion(ProtocolVersion version);
+@Mixin(targets = "io.netty.buffer.ByteBufAllocator", remap = false)
+public interface MixinByteBufAllocator {
 
 }

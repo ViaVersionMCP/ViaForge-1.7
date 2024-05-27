@@ -1,5 +1,7 @@
-# Legacy development branch for ViaForge 1.8
+# Legacy development branch for ViaForge 1.7.10
 
-Upstream changes are merged into this branch every release.
+Requires UniMixins(https://modrinth.com/mod/unimixins)
+
+ViaForge 1.7.10 was provided AS-IS and Upstream changes are not merged here. Issues will be ignored.
 
 Switch to the `master` branch for the latest changes.

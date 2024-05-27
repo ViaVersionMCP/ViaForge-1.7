@@ -27,6 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
+import net.minecraft.client.renderer.Tessellator;
 import net.raphimc.vialoader.util.ProtocolVersionList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -102,8 +103,8 @@ public class GuiProtocolSelector extends GuiScreen {
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
-        list.handleMouseInput();
+    public void handleMouseInput() {
+        //list.handleMouseInput();
         super.handleMouseInput();
     }
 
@@ -126,7 +127,7 @@ public class GuiProtocolSelector extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
-    class SlotList extends GuiSlot {
+    public class SlotList extends GuiSlot {
 
         public SlotList(Minecraft client, int width, int height, int top, int bottom, int slotHeight) {
             super(client, width, height, top, bottom, slotHeight);
@@ -153,7 +154,7 @@ public class GuiProtocolSelector extends GuiScreen {
         }
 
         @Override
-        protected void drawSlot(int index, int x, int y, int slotHeight, int mouseX, int mouseY) {
+        protected void drawSlot(int index, int x, int y, int p_148126_4_, Tessellator p_148126_5_, int p_148126_6_, int p_148126_7_) {
             final ProtocolVersion targetVersion = ViaForgeCommon.getManager().getTargetVersion();
             final ProtocolVersion version = ProtocolVersionList.getProtocolsNewToOld().get(index);
 
@@ -164,14 +165,14 @@ public class GuiProtocolSelector extends GuiScreen {
                 color = GuiProtocolSelector.this.simple ? ChatFormatting.WHITE.toString() : ChatFormatting.DARK_RED.toString();
             }
 
-            drawCenteredString(mc.fontRendererObj,(color) + version.getName(), width / 2, y, -1);
+            drawCenteredString(mc.fontRenderer,(color) + version.getName(), width / 2, y, -1);
         }
     }
 
     public interface FinishedCallback {
 
         void finished(final ProtocolVersion version, final GuiScreen parent);
-        
+
     }
-    
+
 }

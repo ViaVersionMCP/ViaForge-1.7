@@ -32,5 +32,5 @@ public class ViaForgeVersionProvider extends BaseVersionProvider {
         }
         return super.getClosestServerProtocol(connection);
     }
-    
+
 }

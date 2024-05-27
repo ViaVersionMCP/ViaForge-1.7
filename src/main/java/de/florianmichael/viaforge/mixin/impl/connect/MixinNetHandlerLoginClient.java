@@ -38,13 +38,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(NetHandlerLoginClient.class)
 public class MixinNetHandlerLoginClient {
 
-    @Shadow @Final private NetworkManager networkManager;
+    @Shadow @Final private NetworkManager field_147393_d;
 
     @Redirect(method = "handleEncryptionRequest", at = @At(value = "INVOKE", target = "Lcom/mojang/authlib/minecraft/MinecraftSessionService;joinServer(Lcom/mojang/authlib/GameProfile;Ljava/lang/String;Ljava/lang/String;)V"))
     public void onlyJoinServerIfPremium(MinecraftSessionService instance, GameProfile profile, String authenticationToken, String serverId) throws AuthenticationException {
-        final VFNetworkManager mixinNetworkManager = (VFNetworkManager) networkManager;
+        final VFNetworkManager mixinNetworkManager = (VFNetworkManager) field_147393_d;
         if (mixinNetworkManager.viaForge$getTrackedVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_6_4)) {
-            final UserConnection user = networkManager.channel().attr(ViaForgeCommon.LOCAL_VIA_USER).get();
+            final UserConnection user = field_147393_d.channel().attr(ViaForgeCommon.LOCAL_VIA_USER).get();
             if (user != null && user.has(ProtocolMetadataStorage.class) && !user.get(ProtocolMetadataStorage.class).authenticate) {
                 // We are in the 1.7 -> 1.6 protocol, so we need to skip the joinServer call
                 // if the server is in offline mode, due the packet changes <-> networking changes
