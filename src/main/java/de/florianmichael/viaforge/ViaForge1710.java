@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.function.Supplier;
 
 @SuppressWarnings("all")
-@Mod(modid = "viaforge", name = "ViaForge", acceptableRemoteVersions = "*", useMetadata=true)
+@Mod(modid = "viaforge", name = "ViaForge", acceptableRemoteVersions = "*", useMetadata = true)
 public class ViaForge1710 implements VFPlatform {
 
     public static final ViaForge1710 PLATFORM = new ViaForge1710();
