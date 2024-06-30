@@ -30,13 +30,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiMainMenu.class)
-public class MixinGuiMainMenu extends GuiScreen {
+public abstract class MixinGuiMainMenu extends GuiScreen {
 
     @Inject(method = "initGui", at = @At("RETURN"))
     public void hookViaForgeButton(CallbackInfo ci) {
         ViaForgeCommon.init(ViaForge1710.PLATFORM);
 
-        final ViaForgeConfig config = ViaForgeCommon.getManager().getConfig();
+        ViaForgeConfig config = ViaForgeCommon.getManager().getConfig();
         if (config.isShowMainMenuButton()) {
             final Pair<Integer, Integer> pos = config.getViaForgeButtonPosition().getPosition(this.width, this.height);
 

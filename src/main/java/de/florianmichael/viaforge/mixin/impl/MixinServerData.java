@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ServerData.class)
-public class MixinServerData implements ExtendedServerData {
+public abstract class MixinServerData implements ExtendedServerData {
 
     @Unique
     private ProtocolVersion viaForge$version;

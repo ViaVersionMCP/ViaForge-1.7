@@ -28,7 +28,6 @@ whitelist.json
 *.ipr
 *.iws
 src/main/resources/mixins.*([!.]).json
-*.bat
 *.DS_Store
 !gradlew.bat
 .factorypath
@@ -37,3 +36,7 @@ addon.local.gradle.kts
 addon.late.local.gradle
 addon.late.local.gradle.kts
 layout.json
+# downgraded binaries
+downloads/
+output/
+JavaDowngrader-Standalone-1.1.2.jar

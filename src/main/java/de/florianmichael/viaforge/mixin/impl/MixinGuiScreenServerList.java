@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiScreenServerList.class)
-public class MixinGuiScreenServerList extends GuiScreen {
+public abstract class MixinGuiScreenServerList extends GuiScreen {
 
     @Inject(method = "initGui", at = @At("RETURN"))
     public void hookViaForgeButton(CallbackInfo ci) {
@@ -51,5 +51,5 @@ public class MixinGuiScreenServerList extends GuiScreen {
             }
         }
     }
-    
+
 }

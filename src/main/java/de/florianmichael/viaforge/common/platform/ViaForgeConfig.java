@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class ViaForgeConfig extends Config {
 
@@ -45,9 +46,10 @@ public class ViaForgeConfig extends Config {
 
     /**
      * @param configFile The location of where the config is loaded/saved.
+     * @param logger Via.getPlatform()'s getLogger.
      */
-    public ViaForgeConfig(File configFile) {
-        super(configFile);
+    public ViaForgeConfig(File configFile, Logger logger) {
+        super(configFile, logger);
         reload();
     }
 

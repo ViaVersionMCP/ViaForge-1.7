@@ -43,13 +43,17 @@ plugins {
     id 'de.undercouch.download' version '5.4.0'
     id 'com.github.gmazzo.buildconfig' version '3.1.0' apply false // Unused, available for addon.gradle
     id 'com.gtnewhorizons.retrofuturagradle' version '1.3.26'
+    id 'xyz.wagyourtail.jvmdowngrader' version '0.7.2'
 }
 
 // In submodules, .git is a file pointing to the real git dir
 
 def out = services.get(StyledTextOutputFactory).create('an-output')
 
-def projectJavaVersion = JavaLanguageVersion.of(8)
+tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 checkPropertyExists("modName")
 checkPropertyExists("modId")
@@ -97,13 +101,10 @@ if (usesShadowedDependencies.toBoolean()) {
     apply plugin: "com.github.johnrengelman.shadow"
 }
 
+def projectJavaVersion = JavaLanguageVersion.of(8)
 java {
     toolchain {
-        if (enableModernJavaSyntax.toBoolean()) {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        } else {
-            languageVersion.set(projectJavaVersion)
-        }
+        languageVersion.set(projectJavaVersion)
         vendor.set(JvmVendorSpec.AZUL)
     }
     if (!noPublishedSources) {
@@ -163,7 +164,7 @@ if (enableModernJavaSyntax.toBoolean()) {
         options.release.set(8)
 
         javaCompiler.set(javaToolchains.compilerFor {
-            languageVersion.set(JavaLanguageVersion.of(17))
+            language.set(JavaLanguage.of(17))
             vendor.set(JvmVendorSpec.AZUL)
         })
     }
@@ -440,6 +441,8 @@ configurations {
             // TODO: remove Compile after all uses are refactored to Implementation
             config.extendsFrom(shadeCompile)
             config.extendsFrom(shadowCompile)
+            libraryJ8
+            shadowCompile.extendsFrom(libraryJ8)
         }
     }
     // A "bag-of-dependencies"-style configuration for backwards compatibility, gets put in "api"
@@ -459,6 +462,8 @@ configurations {
     testImplementation.extendsFrom(testCompile)
 }
 
+jvmdg.dg(configurations.libraryJ8)
+
 afterEvaluate {
     if (!configurations.compile.allDependencies.empty || !configurations.testCompile.allDependencies.empty) {
         logger.warn("This project uses deprecated `compile` dependencies, please migrate to using `api` and `implementation`")
@@ -467,6 +472,7 @@ afterEvaluate {
 }
 
 repositories {
+    mavenCentral()
     maven {
         name 'Overmind forge repo mirror'
         url 'https://gregtech.overminddl1.com/'
@@ -481,6 +487,12 @@ repositories {
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
         content {
             includeGroup "org.lwjgl"
+        }
+    }
+    maven {
+        url = "https://repo.viaversion.com"
+        metadataSources {
+            artifact()
         }
     }
     if (includeWellKnownRepositories.toBoolean()) {
@@ -504,17 +516,6 @@ repositories {
             }
             filter {
                 includeGroup "maven.modrinth"
-            }
-        }
-        maven {
-            name = "ic2"
-            url = getURL("https://maven.ic2.player.to/", "https://maven2.ic2.player.to/")
-            content {
-                includeGroup "net.industrial-craft"
-            }
-            metadataSources {
-                mavenPom()
-                artifact()
             }
         }
         maven {
@@ -572,19 +573,7 @@ configurations.all {
 
 dependencies {
     constraints {
-        def minGtnhLibVersion = "0.0.13"
-        implementation("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
-            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
-        }
-        runtimeOnly("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
-            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
-        }
-        devOnlyNonPublishable("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
-            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
-        }
-        runtimeOnlyNonPublishable("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
-            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
-        }
+
     }
 }
 
@@ -652,6 +641,7 @@ tasks.named("processResources", ProcessResources).configure {
 }
 
 dependencies {
+
 }
 
 ext.java17JvmArgs = [
@@ -699,9 +689,9 @@ def getManifestAttributes() {
 
     if (usesMixins.toBoolean()) {
         manifestAttributes += [
+            "ForceLoadAsMod": !containsMixinsAndOrCoreModOnly.toBoolean(),
             "TweakClass"    : "org.spongepowered.asm.launch.MixinTweaker",
-            "MixinConfigs"  : "mixins." + modId + ".json",
-            "ForceLoadAsMod": !containsMixinsAndOrCoreModOnly.toBoolean()
+            "MixinConfigs"  : "mixins." + modId + ".json"
         ]
     }
     return manifestAttributes
@@ -718,7 +708,6 @@ if (usesShadowedDependencies.toBoolean()) {
         manifest {
             attributes(getManifestAttributes())
         }
-
         if (minimizeShadowedDependencies.toBoolean()) {
             minimize()  // This will only allow shading for actually used classes
         }
@@ -918,57 +907,6 @@ tasks.named("ideVirtualMainClasses").configure {
 // workaround variable hiding in pom processing
 def projectConfigs = project.configurations
 
-publishing {
-    publications {
-        create("maven", MavenPublication) {
-            from components.java
-
-            if (apiPackage) {
-                artifact apiJar
-            }
-
-            groupId = System.getenv("ARTIFACT_GROUP_ID") ?: project.group
-            artifactId = System.getenv("ARTIFACT_ID") ?: project.name
-            // Using the identified version, not project.version as it has the prepended 1.7.10
-            version = System.getenv("RELEASE_VERSION") ?: identifiedVersion
-        }
-    }
-    repositories {
-        if (usesMavenPublishing.toBoolean() && System.getenv("MAVEN_USER") != null) {
-            maven {
-                url = mavenPublishUrl
-                allowInsecureProtocol = mavenPublishUrl.startsWith("http://") // Mostly for the GTNH maven
-                credentials {
-                    username = System.getenv("MAVEN_USER") ?: "NONE"
-                    password = System.getenv("MAVEN_PASSWORD") ?: "NONE"
-                }
-            }
-        }
-    }
-}
-
-// Updating
-
-def buildscriptGradleVersion = "8.5"
-
-tasks.named('wrapper', Wrapper).configure {
-    gradleVersion = buildscriptGradleVersion
-}
-
-tasks.register('updateBuildScript') {
-    group = 'GTNH Buildscript'
-    description = 'Updates the build script to the latest version'
-
-    if (gradle.gradleVersion != buildscriptGradleVersion && !Boolean.getBoolean('DISABLE_BUILDSCRIPT_GRADLE_UPDATE')) {
-        dependsOn('wrapper')
-    }
-
-    doLast {
-        if (performBuildScriptUpdate()) return
-
-        print("Build script already up-to-date!")
-    }
-}
 
 // If you want to add more cases to this task, implement them as arguments if total amount to print gets too large
 tasks.register('faq') {
@@ -985,84 +923,6 @@ tasks.register('faq') {
             "However, keep in mind that Jabel enables only syntax features, but not APIs that were introduced in " +
             "Java 9 or later.")
     }
-}
-
-static URL availableBuildScriptUrl() {
-    new URL("https://raw.githubusercontent.com/GTNewHorizons/ExampleMod1.7.10/master/build.gradle")
-}
-
-static URL exampleSettingsGradleUrl() {
-    new URL("https://raw.githubusercontent.com/GTNewHorizons/ExampleMod1.7.10/master/settings.gradle.example")
-}
-
-static URL exampleGitAttributesUrl() {
-    new URL("https://raw.githubusercontent.com/GTNewHorizons/ExampleMod1.7.10/master/.gitattributes")
-}
-
-
-boolean verifyGitAttributes() {
-    def gitattributesFile = getFile(".gitattributes")
-    if (!gitattributesFile.exists()) {
-        println("Downloading default .gitattributes")
-        exampleGitAttributesUrl().withInputStream { i -> gitattributesFile.withOutputStream { it << i } }
-        exec {
-            workingDir '.'
-            commandLine 'git', 'add', '--renormalize', '.'
-        }
-        return true
-    }
-    return false
-}
-
-boolean verifySettingsGradle() {
-    def settingsFile = getFile("settings.gradle")
-    if (!settingsFile.exists()) {
-        println("Downloading default settings.gradle")
-        exampleSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { it << i } }
-        return true
-    }
-    return false
-}
-
-boolean performBuildScriptUpdate() {
-    if (isNewBuildScriptVersionAvailable()) {
-        def buildscriptFile = getFile("build.gradle")
-        availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
-        def out = services.get(StyledTextOutputFactory).create('buildscript-update-output')
-        out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
-        boolean settingsupdated = verifySettingsGradle()
-        settingsupdated = verifyGitAttributes() || settingsupdated
-        if (settingsupdated)
-            throw new GradleException("Settings has been updated, please re-run task.")
-        return true
-    }
-    return false
-}
-
-boolean isNewBuildScriptVersionAvailable() {
-    Map parameters = ["connectTimeout": 2000, "readTimeout": 2000]
-
-    String currentBuildScript = getFile("build.gradle").getText()
-    String currentBuildScriptHash = getVersionHash(currentBuildScript)
-    String availableBuildScriptHash
-    try {
-        String availableBuildScript = availableBuildScriptUrl().newInputStream(parameters).getText()
-        availableBuildScriptHash = getVersionHash(availableBuildScript)
-    } catch (IOException e) {
-        logger.warn("Could not check for buildscript update availability: {}", e.message)
-        return false
-    }
-
-    boolean isUpToDate = currentBuildScriptHash.empty || availableBuildScriptHash.empty || currentBuildScriptHash == availableBuildScriptHash
-    return !isUpToDate
-}
-
-static String getVersionHash(String buildScriptContent) {
-    String versionLine = buildScriptContent.find("^//version: [a-z0-9]*")
-    if (versionLine != null) {
-        return versionLine.split(": ").last()
-    }
-    return ""
 }
 
 // Parameter Deobfuscation

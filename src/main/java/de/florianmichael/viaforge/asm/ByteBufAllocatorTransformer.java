@@ -21,17 +21,23 @@ package de.florianmichael.viaforge.asm;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.*;
 
-import java.util.Objects;
-
 public class ByteBufAllocatorTransformer implements IClassTransformer {
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
-        if ((Objects.equals(name, "io.netty.buffer.ByteBufAllocator"))) {
+        if ((name == null) || (bytes == null)) {
+            return bytes;
+        }
+        if (name.equals("io.netty.buffer.ByteBufAllocator")) {
             ClassReader cr = new ClassReader(bytes);
             ClassWriter cw = new ClassWriter(cr, 0);
-            AddFieldAdapter af = new AddFieldAdapter(cw);
-            cr.accept(af, 0);
+            try {
+                AddFieldAdapter af = new AddFieldAdapter(cw);
+                cr.accept(af, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return bytes;
+            }
             return cw.toByteArray();
         }
         return bytes;

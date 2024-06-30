@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiScreenAddServer.class)
-public class MixinGuiScreenAddServer extends GuiScreen {
+public abstract class MixinGuiScreenAddServer extends GuiScreen {
 
     @Shadow @Final private ServerData field_146311_h;
 

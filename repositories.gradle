@@ -10,8 +10,11 @@ repositories {
         name = "sponge"
         url = "https://repo.spongepowered.org/repository/maven-public/"
     }
-    maven { 
-        url = "https://repo.viaversion.com" 
+    maven {
+        url = "https://repo.viaversion.com"
+        metadataSources {
+            artifact()
+        }
     }
     maven {
         url "https://cursemaven.com"

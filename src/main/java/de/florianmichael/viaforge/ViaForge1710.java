@@ -18,22 +18,25 @@
 
 package de.florianmichael.viaforge;
 
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import de.florianmichael.viaforge.common.platform.VFPlatform;
 import de.florianmichael.viaforge.provider.ViaForgeGameProfileFetcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
-import net.raphimc.vialegacy.protocols.release.protocol1_8to1_7_6_10.providers.GameProfileFetcher;
+import net.raphimc.vialegacy.protocol.release.r1_7_6_10tor1_8.provider.GameProfileFetcher;
 
 import java.io.File;
 import java.util.function.Supplier;
 
-@SuppressWarnings("all")
-@Mod(modid = "viaforge", name = "ViaForge", acceptableRemoteVersions = "*", useMetadata = true)
+@Mod(modid = "viaforge", name = "ViaForge", acceptableRemoteVersions = "*")
 public class ViaForge1710 implements VFPlatform {
 
     public static final ViaForge1710 PLATFORM = new ViaForge1710();
+
+    public ViaForge1710() {
+        FMLLog.info("Loading ViaForge 1.7.10...");
+    }
 
     @Override
     public int getGameVersion() {

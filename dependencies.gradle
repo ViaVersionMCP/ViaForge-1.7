@@ -35,21 +35,13 @@
  */
 dependencies {
     // included for qol, if building fails you can remove these without consequences
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.4.13-GTNH:dev")
+    //runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.4.13-GTNH:dev")
     //runtimeOnlyNonPublishable("com.github.GTNewHorizons:inventory-tweaks:1.6.0:dev")
     //runtimeOnlyNonPublishable deobf('https://github.com/Yoghurt4C/Audino/releases/download/1.0.1/Audino-1.0.1.jar')
 
-    // compileOnlyApi ("io.netty:netty-all:4.0.23.Final")
+    shadowCompile fileTree(dir: 'output', include: '*.jar')
 
-    shadowCompile "com.viaversion:viaversion-common:${project.viaversion_version}"
-    shadowCompile "com.viaversion:viabackwards-common:${project.viabackwards_version}"
-    shadowCompile "com.viaversion:viarewind-common:${project.viarewind_version}"
-    shadowCompile "net.raphimc:ViaLegacy:${project.vialegacy_version}"
-
-    shadowCompile "net.raphimc:ViaAprilFools:${project.viaaprilfools_version}"
-    shadowCompile "net.raphimc:ViaLoader:${project.vialoader_version}"
-
-    shadowImplementation "org.slf4j:slf4j-api:${project.slf4j_version}"
-    shadowImplementation "org.yaml:snakeyaml:${project.snake_yml_version}"
+    shadowCompile "org.slf4j:slf4j-api:${project.slf4j_version}"
+    shadowCompile "org.yaml:snakeyaml:${project.snake_yml_version}"
     compileOnlyApi("io.netty:netty-all:4.0.23.Final")
 }

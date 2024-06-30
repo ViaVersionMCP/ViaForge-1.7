@@ -5,6 +5,9 @@
   "plugin": "de.florianmichael.viaforge.mixin.MixinPlugin",
   "package": "de.florianmichael.viaforge.mixin.impl",
   "refmap": "mixins.viaforge.refmap.json",
+  "mixins": [
+    "netty.MixinByteBufUtil"
+  ],
   "client": [
     "MixinGuiMainMenu",
     "MixinGuiMultiplayer",
@@ -17,9 +20,5 @@
     "connect.MixinNetworkManager2",
     "connect.MixinServerPinger"
   ],
-  "verbose": true,
-  "mixins": [
-    "netty.MixinByteBufAllocator",
-    "netty.MixinByteBufUtil"
-  ]
+  "verbose": true
 }

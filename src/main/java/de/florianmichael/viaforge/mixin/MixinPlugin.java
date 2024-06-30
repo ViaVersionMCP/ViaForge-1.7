@@ -54,16 +54,20 @@ public class MixinPlugin implements IMixinConfigPlugin {
     }
 
     @Override
-    public void preApply(String s, ClassNode targetClass, String mixin, IMixinInfo iMixinInfo) {
+    public void preApply(String name, ClassNode targetClass, String mixin, IMixinInfo iMixinInfo) {
 
     }
 
     @Override
-    public void postApply(String s, ClassNode targetClass, String mixin, IMixinInfo iMixinInfo) {
-        if (mixin.contains("MixinByteBufUtil")) {
-            for (FieldNode field : targetClass.fields) {
-                field.access &= ~Opcodes.ACC_PRIVATE;
-                field.access |= Opcodes.ACC_PUBLIC;
+    public void postApply(String name, ClassNode targetClass, String mixin, IMixinInfo iMixinInfo) {
+        if (name.contains("ByteBufUtil")) {
+            try {
+                for (FieldNode field : targetClass.fields) {
+                    field.access &= ~Opcodes.ACC_PRIVATE;
+                    field.access |= Opcodes.ACC_PUBLIC;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }

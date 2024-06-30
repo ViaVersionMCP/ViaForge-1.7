@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.Mixins;
 
 import java.util.Map;
 
-@IFMLLoadingPlugin.TransformerExclusions({"com.viaversion", "net.raphimc", "org.yaml"})
 public class MixinLoader implements IFMLLoadingPlugin {
 
     public MixinLoader() {
@@ -52,8 +51,7 @@ public class MixinLoader implements IFMLLoadingPlugin {
     }
 
     @Override
-    public void injectData(Map<String, Object> data) {
-    }
+    public void injectData(Map<String, Object> data) {}
 
     @Override
     public String getAccessTransformerClass() {
