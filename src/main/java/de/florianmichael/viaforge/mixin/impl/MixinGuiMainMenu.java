@@ -34,8 +34,6 @@ public abstract class MixinGuiMainMenu extends GuiScreen {
 
     @Inject(method = "initGui", at = @At("RETURN"))
     public void hookViaForgeButton(CallbackInfo ci) {
-        ViaForgeCommon.init(ViaForge1710.PLATFORM);
-
         ViaForgeConfig config = ViaForgeCommon.getManager().getConfig();
         if (config.isShowMainMenuButton()) {
             final Pair<Integer, Integer> pos = config.getViaForgeButtonPosition().getPosition(this.width, this.height);

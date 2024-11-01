@@ -20,6 +20,8 @@ package de.florianmichael.viaforge;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import de.florianmichael.viaforge.common.ViaForgeCommon;
 import de.florianmichael.viaforge.common.platform.VFPlatform;
 import de.florianmichael.viaforge.provider.ViaForgeGameProfileFetcher;
 import net.minecraft.client.Minecraft;
@@ -32,10 +34,13 @@ import java.util.function.Supplier;
 @Mod(modid = "viaforge", name = "ViaForge", acceptableRemoteVersions = "*")
 public class ViaForge1710 implements VFPlatform {
 
-    public static final ViaForge1710 PLATFORM = new ViaForge1710();
-
     public ViaForge1710() {
         FMLLog.info("Loading ViaForge 1.7.10...");
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        ViaForgeCommon.init(this);
     }
 
     @Override
