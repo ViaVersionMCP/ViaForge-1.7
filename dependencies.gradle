@@ -1,3 +1,6 @@
+import javax.swing.plaf.metal.MetalIconFactory
+import java.nio.file.Files
+
 /*
  * Add your dependencies here. Supported configurations:
  *  - api("group:name:version:classifier"): if you use the types from this dependency in the public API of this mod
@@ -41,7 +44,9 @@ dependencies {
 
     shadowCompile fileTree(dir: 'output', include: '*.jar')
 
-    shadowCompile "org.slf4j:slf4j-api:${project.slf4j_version}"
-    shadowCompile "org.yaml:snakeyaml:${project.snake_yml_version}"
+    shadowCompile("org.slf4j:slf4j-api:${project.slf4j_version}")
+    shadowCompile("org.yaml:snakeyaml:${project.snake_yml_version}") {
+        exclude module : "META-INF/versions/"
+    }
     compileOnlyApi("io.netty:netty-all:4.0.23.Final")
 }

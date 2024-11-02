@@ -721,9 +721,7 @@ if (usesShadowedDependencies.toBoolean()) {
             relocationPrefix = modGroup + ".shadow"
             enableRelocation = true
         }
-        exclude("META-INF/maven")
-        exclude("META-INF/versions")
-        exclude("META-INF/LICENSE")
+        exclude("META-INF/versions/")
     }
     configurations.runtimeElements.outgoing.artifacts.clear()
     configurations.apiElements.outgoing.artifacts.clear()
