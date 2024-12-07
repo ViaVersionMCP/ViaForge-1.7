@@ -3,7 +3,7 @@
     "modid": "viaforge",
     "name": "ViaForge",
     "description": "Client-side Implementation of the Via* projects for Minecraft Forge",
-    "version": "0.3",
+    "version": "0.4",
     "mcversion": "[1.7.10]",
     "url": "https://github.com/ViaVersionMCP/ViaForge-1.7",
     "authorList": [
