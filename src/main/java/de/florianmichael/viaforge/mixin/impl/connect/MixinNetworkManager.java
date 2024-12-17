@@ -29,6 +29,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.util.CryptManager;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import net.raphimc.vialoader.netty.VLLegacyPipeline;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -78,6 +79,7 @@ public class MixinNetworkManager implements VFNetworkManager {
         }
     }
 
+    @Dynamic
     @Inject(method = "provideLanClient", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;group(Lio/netty/channel/EventLoopGroup;)Lio/netty/bootstrap/AbstractBootstrap;"), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void setTargetVersion(InetAddress address, int serverPort, CallbackInfoReturnable<NetworkManager> cir, NetworkManager networkmanager) {
         final VFNetworkManager mixinNetworkManager = (VFNetworkManager) networkmanager;
