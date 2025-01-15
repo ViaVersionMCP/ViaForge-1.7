@@ -28,18 +28,20 @@ import net.minecraft.client.network.NetHandlerLoginClient;
 import net.minecraft.network.NetworkManager;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import net.raphimc.vialegacy.protocol.release.r1_6_4tor1_7_2_5.storage.ProtocolMetadataStorage;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@SuppressWarnings("DataFlowIssue")
+@SuppressWarnings("all")
 @Mixin(NetHandlerLoginClient.class)
 public class MixinNetHandlerLoginClient {
 
     @Shadow @Final private NetworkManager field_147393_d;
 
+    @Dynamic
     @Redirect(method = "handleEncryptionRequest", at = @At(value = "INVOKE", target = "Lcom/mojang/authlib/minecraft/MinecraftSessionService;joinServer(Lcom/mojang/authlib/GameProfile;Ljava/lang/String;Ljava/lang/String;)V"))
     public void onlyJoinServerIfPremium(MinecraftSessionService instance, GameProfile profile, String authenticationToken, String serverId) throws AuthenticationException {
         final VFNetworkManager mixinNetworkManager = (VFNetworkManager) field_147393_d;

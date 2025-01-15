@@ -18,8 +18,8 @@
 
 package de.florianmichael.viaforge.mixin.impl.connect;
 
+import com.viaversion.vialoader.netty.VLLegacyPipeline;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import de.florianmichael.viaforge.common.ViaForgeCommon;
 import de.florianmichael.viaforge.common.platform.VersionTracker;
 import de.florianmichael.viaforge.common.protocoltranslator.netty.VFNetworkManager;
 import io.netty.channel.Channel;
@@ -28,7 +28,6 @@ import net.minecraft.network.NettyEncryptingEncoder;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.CryptManager;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
-import net.raphimc.vialoader.netty.VLLegacyPipeline;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

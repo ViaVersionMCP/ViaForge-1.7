@@ -18,8 +18,8 @@
 
 package de.florianmichael.viaforge.common.protocoltranslator;
 
-import net.raphimc.vialoader.impl.viaversion.VLInjector;
-import net.raphimc.vialoader.netty.VLLegacyPipeline;
+import com.viaversion.vialoader.impl.viaversion.VLInjector;
+import com.viaversion.vialoader.netty.VLLegacyPipeline;
 
 public class ViaForgeVLInjector extends VLInjector {
 
@@ -32,5 +32,5 @@ public class ViaForgeVLInjector extends VLInjector {
     public String getEncoderName() {
         return VLLegacyPipeline.VIA_ENCODER_NAME;
     }
-    
+
 }

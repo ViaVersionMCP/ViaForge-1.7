@@ -19,6 +19,7 @@
 package de.florianmichael.viaforge.gui;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
+import com.viaversion.vialoader.util.ProtocolVersionList;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.util.DumpUtil;
@@ -28,11 +29,9 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.renderer.Tessellator;
-import net.raphimc.vialoader.util.ProtocolVersionList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
