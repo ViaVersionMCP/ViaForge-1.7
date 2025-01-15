@@ -6,6 +6,8 @@
   "package": "de.florianmichael.viaforge.mixin.impl",
   "refmap": "mixins.viaforge.refmap.json",
   "mixins": [
+    "legacy.MixinBulkChunkType",
+    "legacy.MixinChunkType",
     "netty.MixinByteBufUtil"
   ],
   "client": [
