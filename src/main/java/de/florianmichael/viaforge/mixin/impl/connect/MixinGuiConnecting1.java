@@ -36,7 +36,7 @@ public class MixinGuiConnecting1 {
     @Redirect(method = "run", at = @At(value = "INVOKE", target = "Ljava/net/InetAddress;getByName(Ljava/lang/String;)Ljava/net/InetAddress;"))
     public InetAddress trackServerVersion(String s) throws UnknownHostException {
         final InetAddress address = InetAddress.getByName(s);
-        ProtocolVersion version = ((ExtendedServerData) Minecraft.getMinecraft().func_147104_D()).viaForge$getVersion();
+        ProtocolVersion version = ((ExtendedServerData) Minecraft.getMinecraft().getCurrentServerData()).viaForge$getVersion();
         if (version == null) {
             version = ViaForgeCommon.getManager().getTargetVersion();
         }

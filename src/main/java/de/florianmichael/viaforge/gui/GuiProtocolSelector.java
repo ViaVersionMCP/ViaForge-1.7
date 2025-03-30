@@ -164,7 +164,7 @@ public class GuiProtocolSelector extends GuiScreen {
                 color = GuiProtocolSelector.this.simple ? ChatFormatting.WHITE.toString() : ChatFormatting.DARK_RED.toString();
             }
 
-            drawCenteredString(mc.fontRenderer,(color) + version.getName(), width / 2, y, -1);
+            drawCenteredString(mc.fontRendererObj,(color) + version.getName(), width / 2, y, -1);
         }
     }
 

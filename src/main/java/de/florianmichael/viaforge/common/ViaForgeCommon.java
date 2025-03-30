@@ -24,6 +24,7 @@ import com.viaversion.vialoader.netty.CompressionReorderEvent;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.connection.ConnectionDetails;
 import com.viaversion.viaversion.connection.UserConnectionImpl;
 import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
 import de.florianmichael.viaforge.common.platform.VFPlatform;
@@ -34,7 +35,6 @@ import de.florianmichael.viaforge.common.protocoltranslator.netty.VFNetworkManag
 import de.florianmichael.viaforge.common.protocoltranslator.netty.ViaForgeVLLegacyPipeline;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
-
 import java.io.File;
 
 /**
@@ -111,15 +111,11 @@ public class ViaForgeCommon {
         });
     }
 
-    /**
-     * Reorders the compression channel.
-     *
-     * @param channel the channel to reorder the compression for
-     */
-    public void reorderCompression(final Channel channel) {
-        // When Minecraft enables compression, we need to reorder the pipeline
-        // to match the counterparts of via-decoder <-> encoder and via-encoder <-> encoder
-        channel.pipeline().fireUserEventTriggered(CompressionReorderEvent.INSTANCE);
+    public void sendConnectionDetails(final Channel channel) {
+        if (!config.isSendConnectionDetails()) {
+            return;
+        }
+        ConnectionDetails.sendConnectionDetails(channel.attr(LOCAL_VIA_USER).get(), ConnectionDetails.MOD_CHANNEL);
     }
 
     public ProtocolVersion getNativeVersion() {
@@ -135,6 +131,9 @@ public class ViaForgeCommon {
     }
 
     public void setTargetVersionSilent(final ProtocolVersion targetVersion) {
+        if (targetVersion == null) {
+            throw new IllegalArgumentException("Target version cannot be null");
+        }
         final ProtocolVersion oldVersion = this.targetVersion;
         this.targetVersion = targetVersion;
         if (oldVersion != targetVersion) {
@@ -143,6 +142,9 @@ public class ViaForgeCommon {
     }
 
     public void setTargetVersion(final ProtocolVersion targetVersion) {
+        if (targetVersion == null) {
+            throw new IllegalArgumentException("Target version cannot be null");
+        }
         this.targetVersion = targetVersion;
         config.setClientSideVersion(targetVersion.getName());
     }

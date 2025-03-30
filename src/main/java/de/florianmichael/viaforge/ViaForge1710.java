@@ -61,8 +61,7 @@ public class ViaForge1710 implements VFPlatform {
     @Override
     public void joinServer(String serverId) throws Throwable {
         Session session = Minecraft.getMinecraft().getSession();
-
-        Minecraft.getMinecraft().func_152347_ac().joinServer(session.func_148256_e(), session.getToken(), serverId);
+        Minecraft.getMinecraft().getSessionService().joinServer(session.getProfile(), session.getToken(), serverId);
     }
 
     @Override

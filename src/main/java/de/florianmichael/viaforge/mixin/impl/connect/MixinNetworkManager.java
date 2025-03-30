@@ -47,19 +47,13 @@ public class MixinNetworkManager implements VFNetworkManager {
 
     @Shadow private Channel channel;
 
-    @Shadow private boolean field_152463_r;
+    @Shadow private boolean isEncrypted;
 
     @Unique
     private Cipher viaForge$decryptionCipher;
 
     @Unique
     private ProtocolVersion viaForge$targetVersion;
-
-
-    /*@Inject(method = "setCompressionTreshold", at = @At("RETURN"))
-    public void reorderPipeline(int p_setCompressionTreshold_1_, CallbackInfo ci) {
-        ViaForgeCommon.getManager().reorderCompression(channel);
-    }*/
 
     @Inject(method = "enableEncryption", at = @At("HEAD"), cancellable = true)
     private void storeEncryptionCiphers(SecretKey key, CallbackInfo ci) {
@@ -73,7 +67,7 @@ public class MixinNetworkManager implements VFNetworkManager {
             this.viaForge$decryptionCipher = CryptManager.func_151229_a(2, key);
 
             // Enabling the encryption side
-            this.field_152463_r = true;
+            this.isEncrypted = true;
             this.channel.pipeline().addBefore(VLLegacyPipeline.VIALEGACY_PRE_NETTY_LENGTH_REMOVER_NAME, "encrypt", new NettyEncryptingEncoder(CryptManager.func_151229_a(1, key)));
         }
     }

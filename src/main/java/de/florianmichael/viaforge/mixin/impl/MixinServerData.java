@@ -50,7 +50,7 @@ public abstract class MixinServerData implements ExtendedServerData {
         }
     }
 
-    @Inject(method = "func_152583_a", at = @At("HEAD"))
+    @Inject(method = "copyFrom", at = @At("HEAD"))
     public void track(ServerData serverDataIn, CallbackInfo ci) {
         if (serverDataIn instanceof ExtendedServerData) {
             viaForge$version = ((ExtendedServerData) serverDataIn).viaForge$getVersion();
