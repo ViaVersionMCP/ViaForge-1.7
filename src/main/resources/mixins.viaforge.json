@@ -7,14 +7,15 @@
   "refmap": "mixins.viaforge.refmap.json",
   "mixins": [
     "fixes.MixinBulkChunkType",
-    "fixes.MixinChunkType",
-    "fixes.MixinByteBufUtil"
+    "fixes.MixinByteBufUtil",
+    "fixes.MixinChunkType"
   ],
   "client": [
     "MixinGuiMainMenu",
     "MixinGuiMultiplayer",
     "MixinGuiScreenAddServer",
     "MixinGuiScreenServerList",
+    "MixinNetHandlerPlayClient",
     "MixinServerData",
     "connect.MixinGuiConnecting1",
     "connect.MixinNetHandlerLoginClient",

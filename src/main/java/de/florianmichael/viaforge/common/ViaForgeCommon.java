@@ -20,7 +20,6 @@ package de.florianmichael.viaforge.common;
 
 import com.viaversion.vialoader.ViaLoader;
 import com.viaversion.vialoader.impl.platform.*;
-import com.viaversion.vialoader.netty.CompressionReorderEvent;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
@@ -29,6 +28,7 @@ import com.viaversion.viaversion.connection.UserConnectionImpl;
 import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
 import de.florianmichael.viaforge.common.platform.VFPlatform;
 import de.florianmichael.viaforge.common.platform.ViaForgeConfig;
+import de.florianmichael.viaforge.common.platform.ViaForgeViaVersionPlatformImpl;
 import de.florianmichael.viaforge.common.protocoltranslator.ViaForgeVLInjector;
 import de.florianmichael.viaforge.common.protocoltranslator.ViaForgeVLLoader;
 import de.florianmichael.viaforge.common.protocoltranslator.netty.VFNetworkManager;
@@ -41,6 +41,7 @@ import java.io.File;
  * This class is used to manage the common code between the different ViaForge versions.
  * It is used to inject the ViaVersion pipeline into the netty pipeline. It also manages the target version.
  */
+@SuppressWarnings("all")
 public class ViaForgeCommon {
 
     public static final AttributeKey<UserConnection> LOCAL_VIA_USER = new AttributeKey("local_via_user");
@@ -76,7 +77,7 @@ public class ViaForgeCommon {
 
         final File mainFolder = new File(platform.getLeadingDirectory(), "ViaForge");
 
-        ViaLoader.init(new ViaVersionPlatformImpl(mainFolder), new ViaForgeVLLoader(platform), new ViaForgeVLInjector(), null, ViaBackwardsPlatformImpl::new, ViaRewindPlatformImpl::new, ViaLegacyPlatformImpl::new, ViaAprilFoolsPlatformImpl::new);
+        ViaLoader.init(new ViaForgeViaVersionPlatformImpl(mainFolder), new ViaForgeVLLoader(platform), new ViaForgeVLInjector(), null, ViaBackwardsPlatformImpl::new, ViaRewindPlatformImpl::new, ViaLegacyPlatformImpl::new, ViaAprilFoolsPlatformImpl::new);
         manager.config = new ViaForgeConfig(new File(mainFolder, "viaforge.yml"), Via.getPlatform().getLogger());
 
         final ProtocolVersion configVersion = ProtocolVersion.getClosest(manager.config.getClientSideVersion());
