@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 @Mod(modid = "viaforge", name = "ViaForge", version = ViaForge1710.VERSION, acceptableRemoteVersions = "*")
 public class ViaForge1710 implements VFPlatform {
 
-    public static final String VERSION = "4.1.1"; // Sync with upstream
+    public static final String VERSION = "4.2.1"; // Sync with upstream
 
     public ViaForge1710() {
         FMLLog.info("Loading ViaForge 1.7.10...");
