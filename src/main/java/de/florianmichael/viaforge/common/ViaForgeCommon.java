@@ -18,23 +18,25 @@
 
 package de.florianmichael.viaforge.common;
 
-import com.viaversion.vialoader.ViaLoader;
-import com.viaversion.vialoader.impl.platform.*;
+import com.viaversion.viaaprilfools.ViaAprilFoolsPlatformImpl;
+import com.viaversion.viabackwards.ViaBackwardsPlatformImpl;
+import com.viaversion.viarewind.ViaRewindPlatformImpl;
+import com.viaversion.viaversion.ViaManagerImpl;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.commands.ViaCommandHandler;
 import com.viaversion.viaversion.connection.ConnectionDetails;
-import com.viaversion.viaversion.connection.UserConnectionImpl;
-import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
-import de.florianmichael.viaforge.common.platform.VFPlatform;
-import de.florianmichael.viaforge.common.platform.ViaForgeConfig;
-import de.florianmichael.viaforge.common.platform.ViaForgeViaVersionPlatformImpl;
-import de.florianmichael.viaforge.common.protocoltranslator.ViaForgeVLInjector;
-import de.florianmichael.viaforge.common.protocoltranslator.ViaForgeVLLoader;
-import de.florianmichael.viaforge.common.protocoltranslator.netty.VFNetworkManager;
-import de.florianmichael.viaforge.common.protocoltranslator.netty.ViaForgeVLLegacyPipeline;
+import com.viaversion.viaversion.platform.*;
+import de.florianmichael.viaforge.common.platform.*;
+import de.florianmichael.viaforge.common.protocoltranslator.ViaForgePlatformLoader;
+import de.florianmichael.viaforge.common.platform.netty.VFNetworkManager;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
 import io.netty.util.AttributeKey;
+import net.raphimc.vialegacy.ViaLegacyPlatformImpl;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
+import net.raphimc.vialegacy.netty.*;
 import java.io.File;
 
 /**
@@ -44,13 +46,16 @@ import java.io.File;
 @SuppressWarnings("deprecation")
 public class ViaForgeCommon {
 
-    public static final AttributeKey<UserConnection> LOCAL_VIA_USER = new AttributeKey<>("local_via_user");
+    public static final AttributeKey<UserConnection> VF_VIA_USER = new AttributeKey<>("viaforge_via_user");
+
     public static final AttributeKey<VFNetworkManager> VF_NETWORK_MANAGER = new AttributeKey<>("encryption_setup");
 
     private static ViaForgeCommon manager;
 
     private final VFPlatform platform;
+
     private ProtocolVersion targetVersion;
+
     private ProtocolVersion previousVersion;
 
     private ViaForgeConfig config;
@@ -72,14 +77,21 @@ public class ViaForgeCommon {
         if (version == ProtocolVersion.unknown) {
             throw new IllegalArgumentException("Unknown version " + platform.getGameVersion());
         }
-
         manager = new ViaForgeCommon(platform);
-
         final File mainFolder = new File(platform.getLeadingDirectory(), "ViaForge");
-
-        ViaLoader.init(new ViaForgeViaVersionPlatformImpl(mainFolder), new ViaForgeVLLoader(platform), new ViaForgeVLInjector(), null, ViaBackwardsPlatformImpl::new, ViaRewindPlatformImpl::new, ViaLegacyPlatformImpl::new, ViaAprilFoolsPlatformImpl::new);
+        ViaManagerImpl.initAndLoad(
+            new ViaForgeViaVersionPlatform(mainFolder),
+            new NoopInjector(),
+            new ViaCommandHandler(false),
+            new ViaForgePlatformLoader(platform),
+            () -> {
+                new ViaBackwardsPlatformImpl();
+                new ViaRewindPlatformImpl();
+                new ViaLegacyPlatformImpl();
+                new ViaAprilFoolsPlatformImpl();
+            }
+        );
         manager.config = new ViaForgeConfig(new File(mainFolder, "viaforge.yml"), Via.getPlatform().getLogger());
-
         final ProtocolVersion configVersion = ProtocolVersion.getClosest(manager.config.getClientSideVersion());
         if (configVersion != null) {
             manager.setTargetVersion(configVersion);
@@ -97,14 +109,18 @@ public class ViaForgeCommon {
         if (networkManager.viaForge$getTrackedVersion().equals(getNativeVersion())) {
             return; // Don't inject ViaVersion into pipeline if there is nothing to translate anyway
         }
+        final UserConnection user = ViaChannelInitializer.createUserConnection(channel, true);
+        channel.attr(VF_VIA_USER).set(user);
         channel.attr(VF_NETWORK_MANAGER).set(networkManager);
-
-        final UserConnection user = new UserConnectionImpl(channel, true);
-        new ProtocolPipelineImpl(user);
-
-        channel.attr(LOCAL_VIA_USER).set(user);
-
-        channel.pipeline().addLast(new ViaForgeVLLegacyPipeline(user, targetVersion));
+        final ChannelPipeline pipeline = channel.pipeline();
+        // ViaVersion
+        pipeline.addBefore(platform.getDecodeHandlerName(), ViaDecodeHandler.NAME, new ViaDecodeHandler(user));
+        pipeline.addBefore("encoder", ViaEncodeHandler.NAME, new ViaEncodeHandler(user));
+        if (networkManager.viaForge$getTrackedVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_6_4)) {
+            // ViaLegacy
+            pipeline.addBefore("splitter", PreNettyLengthPrepender.NAME, new PreNettyLengthPrepender(user));
+            pipeline.addBefore("prepender", PreNettyLengthRemover.NAME, new PreNettyLengthRemover(user));
+        }
         channel.closeFuture().addListener(future -> {
             if (previousVersion != null) {
                 restoreVersion();
@@ -116,7 +132,7 @@ public class ViaForgeCommon {
         if (!config.isSendConnectionDetails()) {
             return;
         }
-        ConnectionDetails.sendConnectionDetails(channel.attr(LOCAL_VIA_USER).get(), ConnectionDetails.MOD_CHANNEL);
+        ConnectionDetails.sendConnectionDetails(channel.attr(VF_VIA_USER).get(), ConnectionDetails.MOD_CHANNEL);
     }
 
     public ProtocolVersion getNativeVersion() {

@@ -16,23 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.florianmichael.viaforge.common.protocoltranslator.provider;
+package de.florianmichael.viaforge.common.platform.netty;
 
-import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import com.viaversion.viaversion.protocol.version.BaseVersionProvider;
-import de.florianmichael.viaforge.common.ViaForgeCommon;
 
-public class ViaForgeVersionProvider extends BaseVersionProvider {
+public interface VFNetworkManager {
 
-    @Override
-    public ProtocolVersion getClosestServerProtocol(UserConnection connection) throws Exception {
-        if (connection.isClientSide() && !ViaForgeCommon.getManager().getPlatform().isSingleplayer().get()) {
-            if (connection.getChannel() != null) {
-                return connection.getChannel().attr(ViaForgeCommon.VF_NETWORK_MANAGER).get().viaForge$getTrackedVersion();
-            }
-        }
-        return super.getClosestServerProtocol(connection);
-    }
+    /**
+     * API method to setup the decryption side of the pipeline.
+     * This method is called by the {@link de.florianmichael.viaforge.common.protocoltranslator.provider.ViaForgeEncryptionProvider} class.
+     */
+    void viaForge$setupPreNettyDecryption();
+
+    /**
+     * @return the target version of the connection
+     */
+    ProtocolVersion viaForge$getTrackedVersion();
+
+    /**
+     * Sets the target version of the connection.
+     *
+     * @param version the target version
+     */
+    void viaForge$setTrackedVersion(final ProtocolVersion version);
 
 }

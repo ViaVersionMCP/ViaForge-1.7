@@ -18,14 +18,22 @@
 
 package de.florianmichael.viaforge.common.platform;
 
-import com.viaversion.vialoader.impl.platform.ViaVersionPlatformImpl;
+import com.viaversion.viaversion.platform.UserConnectionViaVersionPlatform;
 import de.florianmichael.viaforge.ViaForge1710;
+import de.florianmichael.viaforge.common.protocoltranslator.util.JLoggerToSLF4J;
 import java.io.File;
+import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ViaForgeViaVersionPlatformImpl extends ViaVersionPlatformImpl {
+public final class ViaForgeViaVersionPlatform extends UserConnectionViaVersionPlatform {
 
-    public ViaForgeViaVersionPlatformImpl(final File rootFolder) {
+    public ViaForgeViaVersionPlatform(final File rootFolder) {
         super(rootFolder);
+    }
+
+    @Override
+    public Logger createLogger(final String name) {
+        return new JLoggerToSLF4J(LoggerFactory.getLogger(name));
     }
 
     @Override

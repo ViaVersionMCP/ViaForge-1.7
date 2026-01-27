@@ -18,25 +18,17 @@
 
 package de.florianmichael.viaforge.mixin.impl.connect;
 
-import com.viaversion.vialoader.netty.VLLegacyPipeline;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import de.florianmichael.viaforge.common.platform.VersionTracker;
-import de.florianmichael.viaforge.common.protocoltranslator.netty.VFNetworkManager;
+import de.florianmichael.viaforge.common.platform.netty.VFNetworkManager;
 import io.netty.channel.Channel;
-import net.minecraft.network.NettyEncryptingDecoder;
-import net.minecraft.network.NettyEncryptingEncoder;
-import net.minecraft.network.NetworkManager;
+import net.minecraft.network.*;
 import net.minecraft.util.CryptManager;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
-import org.spongepowered.asm.mixin.Dynamic;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import net.raphimc.vialegacy.netty.PreNettyLengthRemover;
+import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.*;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -45,9 +37,11 @@ import java.net.InetAddress;
 @Mixin(NetworkManager.class)
 public class MixinNetworkManager implements VFNetworkManager {
 
-    @Shadow private Channel channel;
+    @Shadow
+    private Channel channel;
 
-    @Shadow private boolean isEncrypted;
+    @Shadow
+    private boolean isEncrypted;
 
     @Unique
     private Cipher viaForge$decryptionCipher;
@@ -68,12 +62,12 @@ public class MixinNetworkManager implements VFNetworkManager {
 
             // Enabling the encryption side
             this.isEncrypted = true;
-            this.channel.pipeline().addBefore(VLLegacyPipeline.VIALEGACY_PRE_NETTY_LENGTH_REMOVER_NAME, "encrypt", new NettyEncryptingEncoder(CryptManager.func_151229_a(1, key)));
+            this.channel.pipeline().addBefore(PreNettyLengthRemover.NAME, "encrypt", new NettyEncryptingEncoder(CryptManager.func_151229_a(1, key)));
         }
     }
 
     @Dynamic
-    @Inject(method = "provideLanClient", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;group(Lio/netty/channel/EventLoopGroup;)Lio/netty/bootstrap/AbstractBootstrap;"), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "provideLanClient", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;group(Lio/netty/channel/EventLoopGroup;)Lio/netty/bootstrap/AbstractBootstrap;"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void setTargetVersion(InetAddress address, int serverPort, CallbackInfoReturnable<NetworkManager> cir, NetworkManager networkmanager) {
         final VFNetworkManager mixinNetworkManager = (VFNetworkManager) networkmanager;
         mixinNetworkManager.viaForge$setTrackedVersion(VersionTracker.getServerProtocolVersion(address));
@@ -82,7 +76,7 @@ public class MixinNetworkManager implements VFNetworkManager {
     @Override
     public void viaForge$setupPreNettyDecryption() {
         // Enabling the decryption side for 1.6.4 if the 1.7 -> 1.6 protocol tells us to do
-        this.channel.pipeline().addBefore(VLLegacyPipeline.VIALEGACY_PRE_NETTY_LENGTH_REMOVER_NAME, "decrypt", new NettyEncryptingDecoder(this.viaForge$decryptionCipher));
+        this.channel.pipeline().addBefore(PreNettyLengthRemover.NAME, "decrypt", new NettyEncryptingDecoder(this.viaForge$decryptionCipher));
     }
 
     @Override

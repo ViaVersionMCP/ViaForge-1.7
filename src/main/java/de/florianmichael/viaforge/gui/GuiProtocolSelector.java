@@ -19,7 +19,6 @@
 package de.florianmichael.viaforge.gui;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-import com.viaversion.vialoader.util.ProtocolVersionList;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.util.DumpUtil;
@@ -38,12 +37,15 @@ import java.util.concurrent.ExecutionException;
 public class GuiProtocolSelector extends GuiScreen {
 
     private final GuiScreen parent;
+
     private final boolean simple;
+
     private final FinishedCallback finishedCallback;
 
     private SlotList list;
 
     private String status;
+
     private long time;
 
     public GuiProtocolSelector(final GuiScreen parent) {
@@ -59,6 +61,7 @@ public class GuiProtocolSelector extends GuiScreen {
         this.finishedCallback = finishedCallback;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void initGui() {
         super.initGui();
@@ -67,7 +70,6 @@ public class GuiProtocolSelector extends GuiScreen {
             buttonList.add(new GuiButton(2, width - 105, 5, 100, 20, "Create dump"));
             buttonList.add(new GuiButton(3, width - 105, height - 25, 100, 20, "Reload configs"));
         }
-
         list = new SlotList(mc, width, height, 3 + 3 /* start offset */ + (fontRendererObj.FONT_HEIGHT + 2) * 3 /* title is 2 */, height - 30, fontRendererObj.FONT_HEIGHT + 2);
     }
 
@@ -112,17 +114,13 @@ public class GuiProtocolSelector extends GuiScreen {
         if (System.currentTimeMillis() - this.time >= 10_000) {
             this.status = null;
         }
-
         list.drawScreen(mouseX, mouseY, partialTicks);
-
         GL11.glPushMatrix();
         GL11.glScalef(2.0F, 2.0F, 2.0F);
         drawCenteredString(fontRendererObj, ChatFormatting.GOLD + "ViaForge", width / 4, 3, 16777215);
         GL11.glPopMatrix();
-
-        drawCenteredString(fontRendererObj, "https://github.com/ViaVersion/ViaForge", width / 2, (fontRendererObj.FONT_HEIGHT + 2) * 2 + 3, -1);
+        drawCenteredString(fontRendererObj, "https://github.com/ViaVersionMCP/ViaForge-1.7", width / 2, (fontRendererObj.FONT_HEIGHT + 2) * 2 + 3, -1);
         drawString(fontRendererObj, status != null ? status : "Discord: florianmichael", 3, 3, -1);
-
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -134,12 +132,12 @@ public class GuiProtocolSelector extends GuiScreen {
 
         @Override
         protected int getSize() {
-            return ProtocolVersionList.getProtocolsNewToOld().size();
+            return ProtocolVersion.getReversedProtocols().size();
         }
 
         @Override
         protected void elementClicked(int index, boolean b, int i1, int i2) {
-            finishedCallback.finished(ProtocolVersionList.getProtocolsNewToOld().get(index), parent);
+            finishedCallback.finished(ProtocolVersion.getReversedProtocols().get(index), parent);
         }
 
         @Override
@@ -155,16 +153,14 @@ public class GuiProtocolSelector extends GuiScreen {
         @Override
         protected void drawSlot(int index, int x, int y, int p_148126_4_, Tessellator p_148126_5_, int p_148126_6_, int p_148126_7_) {
             final ProtocolVersion targetVersion = ViaForgeCommon.getManager().getTargetVersion();
-            final ProtocolVersion version = ProtocolVersionList.getProtocolsNewToOld().get(index);
-
+            final ProtocolVersion version =  ProtocolVersion.getReversedProtocols().get(index);
             String color;
             if (targetVersion == version) {
                 color = GuiProtocolSelector.this.simple ? ChatFormatting.GOLD.toString() : ChatFormatting.GREEN.toString();
             } else {
                 color = GuiProtocolSelector.this.simple ? ChatFormatting.WHITE.toString() : ChatFormatting.DARK_RED.toString();
             }
-
-            drawCenteredString(mc.fontRendererObj,(color) + version.getName(), width / 2, y, -1);
+            drawCenteredString(mc.fontRendererObj, (color) + version.getName(), width / 2, y, -1);
         }
     }
 

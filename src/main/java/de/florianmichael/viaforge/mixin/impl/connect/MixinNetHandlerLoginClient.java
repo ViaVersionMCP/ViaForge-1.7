@@ -23,7 +23,7 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import de.florianmichael.viaforge.common.ViaForgeCommon;
-import de.florianmichael.viaforge.common.protocoltranslator.netty.VFNetworkManager;
+import de.florianmichael.viaforge.common.platform.netty.VFNetworkManager;
 import net.minecraft.client.network.NetHandlerLoginClient;
 import net.minecraft.network.NetworkManager;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
@@ -46,7 +46,7 @@ public class MixinNetHandlerLoginClient {
     public void onlyJoinServerIfPremium(MinecraftSessionService instance, GameProfile profile, String authenticationToken, String serverId) throws AuthenticationException {
         final VFNetworkManager mixinNetworkManager = (VFNetworkManager) field_147393_d;
         if (mixinNetworkManager.viaForge$getTrackedVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_6_4)) {
-            final UserConnection user = field_147393_d.channel().attr(ViaForgeCommon.LOCAL_VIA_USER).get();
+            final UserConnection user = field_147393_d.channel().attr(ViaForgeCommon.VF_VIA_USER).get();
             if (user != null && user.has(ProtocolMetadataStorage.class) && !user.get(ProtocolMetadataStorage.class).authenticate) {
                 // We are in the 1.7 -> 1.6 protocol, so we need to skip the joinServer call
                 // if the server is in offline mode, due the packet changes <-> networking changes
