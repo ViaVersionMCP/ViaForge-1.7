@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'xyz.wagyourtail.jvmdowngrader' version '1.3.3'
+    id 'xyz.wagyourtail.jvmdowngrader' version '1.3.6'
     id 'xyz.wagyourtail.unimined' version '1.4.1'
     id 'com.github.johnrengelman.shadow' version "8.1.1"
 }
@@ -45,6 +45,10 @@ unimined.minecraft {
 repositories {
     mavenCentral()
     maven {
+        name = "ViaVersionMCP GitHub"
+        url = "https://raw.githubusercontent.com/ViaVersionMCP/ViaForgeLegacyHandler/main/maven/"
+    }
+    maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
     }
@@ -85,6 +89,7 @@ dependencies {
     library ("net.raphimc:ViaLegacy:3.0.13") {
         exclude group: "com.google.code.gson", module: "gson"
     }
+    //library "com.viaversion.addons:LegacyForgeHandler:0.4"
     library ("org.slf4j:slf4j-api:${project.slf4j_version}")
     library ("org.yaml:snakeyaml:${project.snake_yml_version}") {
         exclude module : "META-INF/versions/"
