@@ -22,7 +22,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import de.florianmichael.viaforge.common.ViaForgeCommon;
-import de.florianmichael.viaforge.common.platform.VFPlatform;
+import de.florianmichael.viaforge.common.platform.ViaForgePlatform;
 import de.florianmichael.viaforge.provider.ViaForgeGameProfileFetcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
@@ -32,7 +32,7 @@ import java.io.File;
 import java.util.function.Supplier;
 
 @Mod(modid = "viaforge", name = "ViaForge", version = ViaForge1710.VERSION, acceptableRemoteVersions = "*")
-public class ViaForge1710 implements VFPlatform {
+public class ViaForge1710 implements ViaForgePlatform {
 
     public static final String VERSION = "4.3.3"; // Sync with upstream
 

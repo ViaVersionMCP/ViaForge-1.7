@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * This interface is used to access platform specific fields.
  */
-public interface VFPlatform {
+public interface ViaForgePlatform {
 
     /**
      * @return the native version of the platform

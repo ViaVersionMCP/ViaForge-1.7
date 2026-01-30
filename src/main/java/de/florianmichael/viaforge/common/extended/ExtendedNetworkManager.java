@@ -1,6 +1,6 @@
 /*
  * This file is part of ViaForge - https://github.com/FlorianMichael/ViaForge
- * Copyright (C) 2021-2024 FlorianMichael/EnZaXD <florian.michael07@gmail.com> and contributors
+ * Copyright (C) 2021-2026 FlorianMichael/EnZaXD <florian.michael07@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.florianmichael.viaforge.common.platform.netty;
+package de.florianmichael.viaforge.common.extended;
 
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
-public interface VFNetworkManager {
+public interface ExtendedNetworkManager {
 
     /**
      * API method to setup the decryption side of the pipeline.

@@ -20,7 +20,7 @@ package de.florianmichael.viaforge.mixin.impl.connect;
 
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import de.florianmichael.viaforge.common.platform.VersionTracker;
-import de.florianmichael.viaforge.common.platform.netty.VFNetworkManager;
+import de.florianmichael.viaforge.common.extended.ExtendedNetworkManager;
 import io.netty.channel.Channel;
 import net.minecraft.network.*;
 import net.minecraft.util.CryptManager;
@@ -35,7 +35,7 @@ import javax.crypto.SecretKey;
 import java.net.InetAddress;
 
 @Mixin(NetworkManager.class)
-public class MixinNetworkManager implements VFNetworkManager {
+public class MixinNetworkManager implements ExtendedNetworkManager {
 
     @Shadow
     private Channel channel;
@@ -69,7 +69,7 @@ public class MixinNetworkManager implements VFNetworkManager {
     @Dynamic
     @Inject(method = "provideLanClient", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;group(Lio/netty/channel/EventLoopGroup;)Lio/netty/bootstrap/AbstractBootstrap;"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void setTargetVersion(InetAddress address, int serverPort, CallbackInfoReturnable<NetworkManager> cir, NetworkManager networkmanager) {
-        final VFNetworkManager mixinNetworkManager = (VFNetworkManager) networkmanager;
+        final ExtendedNetworkManager mixinNetworkManager = (ExtendedNetworkManager) networkmanager;
         mixinNetworkManager.viaForge$setTrackedVersion(VersionTracker.getServerProtocolVersion(address));
     }
 

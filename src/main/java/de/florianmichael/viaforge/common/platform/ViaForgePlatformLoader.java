@@ -1,6 +1,6 @@
 /*
  * This file is part of ViaForge - https://github.com/FlorianMichael/ViaForge
- * Copyright (C) 2021-2024 FlorianMichael/EnZaXD <florian.michael07@gmail.com> and contributors
+ * Copyright (C) 2021-2026 FlorianMichael/EnZaXD <florian.michael07@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.florianmichael.viaforge.common.protocoltranslator;
+package de.florianmichael.viaforge.common.platform;
 
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.platform.ViaPlatformLoader;
 import com.viaversion.viaversion.api.platform.providers.ViaProviders;
 import com.viaversion.viaversion.api.protocol.version.VersionProvider;
 import com.viaversion.viaversion.protocols.v1_8to1_9.provider.MovementTransmitterProvider;
-import de.florianmichael.viaforge.common.platform.VFPlatform;
 import de.florianmichael.viaforge.common.protocoltranslator.provider.*;
 import net.raphimc.vialegacy.protocol.classic.c0_28_30toa1_0_15.provider.ClassicMPPassProvider;
 import net.raphimc.vialegacy.protocol.release.r1_2_4_5tor1_3_1_2.provider.OldAuthProvider;
@@ -32,9 +31,9 @@ import net.raphimc.vialegacy.protocol.release.r1_7_6_10tor1_8.provider.GameProfi
 
 public class ViaForgePlatformLoader implements ViaPlatformLoader {
 
-    private final VFPlatform platform;
+    private final ViaForgePlatform platform;
 
-    public ViaForgePlatformLoader(VFPlatform platform) {
+    public ViaForgePlatformLoader(ViaForgePlatform platform) {
         this.platform = platform;
     }
 

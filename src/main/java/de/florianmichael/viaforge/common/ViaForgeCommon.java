@@ -29,8 +29,8 @@ import com.viaversion.viaversion.commands.ViaCommandHandler;
 import com.viaversion.viaversion.connection.ConnectionDetails;
 import com.viaversion.viaversion.platform.*;
 import de.florianmichael.viaforge.common.platform.*;
-import de.florianmichael.viaforge.common.protocoltranslator.ViaForgePlatformLoader;
-import de.florianmichael.viaforge.common.platform.netty.VFNetworkManager;
+import de.florianmichael.viaforge.common.platform.ViaForgePlatformLoader;
+import de.florianmichael.viaforge.common.extended.ExtendedNetworkManager;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.util.AttributeKey;
@@ -48,11 +48,11 @@ public class ViaForgeCommon {
 
     public static final AttributeKey<UserConnection> VF_VIA_USER = new AttributeKey<>("viaforge_via_user");
 
-    public static final AttributeKey<VFNetworkManager> VF_NETWORK_MANAGER = new AttributeKey<>("encryption_setup");
+    public static final AttributeKey<ExtendedNetworkManager> VF_NETWORK_MANAGER = new AttributeKey<>("encryption_setup");
 
     private static ViaForgeCommon manager;
 
-    private final VFPlatform platform;
+    private final ViaForgePlatform platform;
 
     private ProtocolVersion targetVersion;
 
@@ -60,7 +60,7 @@ public class ViaForgeCommon {
 
     private ViaForgeConfig config;
 
-    public ViaForgeCommon(VFPlatform platform) {
+    public ViaForgeCommon(ViaForgePlatform platform) {
         this.platform = platform;
     }
 
@@ -69,7 +69,7 @@ public class ViaForgeCommon {
      *
      * @param platform the platform fields
      */
-    public static void init(final VFPlatform platform) {
+    public static void init(final ViaForgePlatform platform) {
         if (manager != null) {
             return; // Already initialized, ignore it then :tm:
         }
@@ -105,7 +105,7 @@ public class ViaForgeCommon {
      *
      * @param channel the channel to inject the pipeline into
      */
-    public void inject(final Channel channel, final VFNetworkManager networkManager) {
+    public void inject(final Channel channel, final ExtendedNetworkManager networkManager) {
         if (networkManager.viaForge$getTrackedVersion().equals(getNativeVersion())) {
             return; // Don't inject ViaVersion into pipeline if there is nothing to translate anyway
         }
@@ -166,7 +166,7 @@ public class ViaForgeCommon {
         config.setClientSideVersion(targetVersion.getName());
     }
 
-    public VFPlatform getPlatform() {
+    public ViaForgePlatform getPlatform() {
         return platform;
     }
 
