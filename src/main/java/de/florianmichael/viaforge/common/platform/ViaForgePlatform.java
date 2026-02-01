@@ -21,7 +21,6 @@ package de.florianmichael.viaforge.common.platform;
 import net.raphimc.vialegacy.protocol.release.r1_7_6_10tor1_8.provider.GameProfileFetcher;
 
 import java.io.File;
-import java.util.function.Supplier;
 
 /**
  * This interface is used to access platform specific fields.
@@ -36,7 +35,7 @@ public interface ViaForgePlatform {
     /**
      * @return if the client is in singleplayer
      */
-    Supplier<Boolean> isSingleplayer();
+    boolean isSingleplayer();
 
     /**
      * @return the leading directory of the platform
@@ -46,7 +45,7 @@ public interface ViaForgePlatform {
     /**
      * Sends the joinServer API request to Mojang's authentication servers.
      *
-     * @param serverId    the server id of the server
+     * @param serverId the server id of the server
      */
     void joinServer(final String serverId) throws Throwable;
 
@@ -59,5 +58,10 @@ public interface ViaForgePlatform {
      * @return the name of the decode handler in the client connection
      */
     String getDecodeHandlerName();
+
+    /**
+     * @return A {@link com.viaversion.viaversion.api.protocol.AbstractProtocol} implementation that returns valid packet types for the native version
+     */
+    ViaForgeProtocolBase<?, ?, ?, ?> getCustomProtocol();
 
 }

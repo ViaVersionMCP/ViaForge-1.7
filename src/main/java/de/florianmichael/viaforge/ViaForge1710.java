@@ -23,18 +23,19 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import de.florianmichael.viaforge.common.ViaForgeCommon;
 import de.florianmichael.viaforge.common.platform.ViaForgePlatform;
-import de.florianmichael.viaforge.provider.ViaForgeGameProfileFetcher;
+import de.florianmichael.viaforge.common.platform.ViaForgeProtocolBase;
+import de.florianmichael.viaforge.platform.ViaForgeGameProfileFetcher;
+import de.florianmichael.viaforge.platform.ViaForgeProtocol;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import net.raphimc.vialegacy.protocol.release.r1_7_6_10tor1_8.provider.GameProfileFetcher;
 
 import java.io.File;
-import java.util.function.Supplier;
 
 @Mod(modid = "viaforge", name = "ViaForge", version = ViaForge1710.VERSION, acceptableRemoteVersions = "*")
 public class ViaForge1710 implements ViaForgePlatform {
 
-    public static final String VERSION = "4.3.3"; // Sync with upstream
+    public static final String VERSION = "4.3.4"; // Sync with upstream
 
     public ViaForge1710() {
         FMLLog.info("Loading ViaForge 1.7.10...");
@@ -51,8 +52,8 @@ public class ViaForge1710 implements ViaForgePlatform {
     }
 
     @Override
-    public Supplier<Boolean> isSingleplayer() {
-        return () -> Minecraft.getMinecraft().isSingleplayer();
+    public boolean isSingleplayer() {
+        return Minecraft.getMinecraft().isSingleplayer();
     }
 
     @Override
@@ -74,5 +75,10 @@ public class ViaForge1710 implements ViaForgePlatform {
     @Override
     public String getDecodeHandlerName() {
         return "decoder";
+    }
+
+    @Override
+    public ViaForgeProtocolBase<?, ?, ?, ?> getCustomProtocol() {
+        return ViaForgeProtocol.INSTANCE;
     }
 }
